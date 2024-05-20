@@ -1,0 +1,54 @@
+from News_Portal.models import *
+
+us1 = User.objects.create_user(username='Maxim')
+us2 = User.objects.create_user(username='Oleg')
+
+a1 = Author.objects.create(user=us1)
+a2 = Author.objects.create(user=us2)
+
+category1 = Category.objects.create(themes='SP')
+category2 = Category.objects.create(themes='PO')
+category3 = Category.objects.create(themes='ED')
+category4 = Category.objects.create(themes='SC')
+
+post1 = Post.objects.create(authors=a1, selection_field="A", header_post="Заголовок1", text_post="Текст1", rating=0)
+post2 = Post.objects.create(authors=a2, selection_field="A", header_post="Заголовок2", text_post="Текст2", rating=0)
+post3 = Post.objects.create(authors=a1, selection_field="N", header_post="Заголовок3", text_post="Текст3", rating=0)
+
+post_cat1 = PostCategory.objects.create(Posts=post1, Categories=category1)
+post_cat2 = PostCategory.objects.create(Posts=post1, Categories=category2)
+post_cat3 = PostCategory.objects.create(Posts=post2, Categories=category3)
+post_cat4 = PostCategory.objects.create(Posts=post2, Categories=category4)
+post_cat5 = PostCategory.objects.create(Posts=post3, Categories=category1)
+post_cat6 = PostCategory.objects.create(Posts=post3, Categories=category3)
+
+com1 = Comment.objects.create(post=post1, user=us1, text_com='Комментарий1', rating=0)
+com2 = Comment.objects.create(post=post1, user=us2, text_com='Комментарий2', rating=0)
+com3 = Comment.objects.create(post=post2, user=us1, text_com='Комментарий3', rating=0)
+com4 = Comment.objects.create(post=post2, user=us2, text_com='Комментарий4', rating=0)
+com5 = Comment.objects.create(post=post3, user=us1, text_com='Комментарий5', rating=0)
+com6 = Comment.objects.create(post=post3, user=us2, text_com='Комментарий6', rating=0)
+
+post1.like()
+post1.like()
+post1.dislike()
+post2.like()
+post3.like()
+com1.like()
+com2.like()
+com3.like()
+com4.like()
+com4.dislike()
+com5.like()
+com6.like()
+com6.dislike()
+
+a1.update_rating()
+a2.update_rating()
+
+best_author = Author.objects.all().order_by('-rating').first()
+print(best_author.user.username, best_author.rating)
+best_post = Post.objects.filter(selection_field='A').order_by('-rating').first()
+print(best_post.time_of_publication, best_post.authors.user.username, best_post.rating, best_post.header_post, best_post.preview())
+for comment in best_post.post.all():
+    print(comment.time_com, comment.user.username, comment.rating, comment.text_com)
